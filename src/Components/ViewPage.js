@@ -18,8 +18,9 @@ export default function ViewPage() {
         <Button variant="contained" size="small" onClick={() => navigate("/addcertificate", { state: { certificate, isEditing: true } })}>Edit </Button>
       <h3 className='heading'>{certificate.certificationName}</h3>
       <p><strong>Issued By:</strong> {certificate.issuedBy}</p>
-      <p><strong>Start Date:</strong> {certificate.startDate}</p>
-      <p><strong>End Date:</strong> {certificate.endDate}</p>
+      <p><strong>Start Date:</strong> {certificate.startDate}<strong> - End Date:</strong> {certificate.endDate}</p>
+      <p><strong>Remaining Days for Expiration</strong></p>
+      <p><strong>No of Documents</strong></p>
     </Card>
     ) : null}
 

@@ -1,10 +1,11 @@
-import { Button, Card, TextField } from '@mui/material'
+import { Button, Card, styled, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {  useLocation, useNavigate } from 'react-router-dom';
 import dayjs from "dayjs";
 
@@ -43,6 +44,9 @@ export default function CertificationPage({onSaveCertificate, onUpdateCertificat
         }
         navigate("/");
       };
+
+      const VisuallyHiddenInput=styled('input')({ clipPath:'insert(50%)', height:1, overflow:'hidden',clip: 'rect(0 0 0 0)',position: 'absolute',whiteSpace: 'nowrap',
+        width: 1,})
     
   return (
     <>
@@ -58,6 +62,8 @@ export default function CertificationPage({onSaveCertificate, onUpdateCertificat
             <DatePicker value={certification.startDate ? dayjs(certification.startDate) : null} label="Start Date" onChange={(newValue) => handleChange(dayjs(newValue).format("YYYY-MM-DD"), "startDate")} />
             <DatePicker value={certification.endDate ? dayjs(certification.endDate) : null} label="End Date" onChange={(newValue) => handleChange(dayjs(newValue).format("YYYY-MM-DD"), "endDate")} />
           </LocalizationProvider>
+          <Button variant="outlined" startIcon={<CloudUploadIcon />}>File Upload
+          <VisuallyHiddenInput type="file" onChange={(e)=>console.log(e.target.files)} multiple /></Button>
         </Box>
 
         <Box sx={{ display: "flex", gap: 1, position: "fixed", bottom: 10, flexDirection: "row", left: "70%" }}>
