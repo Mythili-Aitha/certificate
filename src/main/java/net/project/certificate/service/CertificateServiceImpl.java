@@ -7,6 +7,9 @@ import net.project.certificate.exception.CertificateNotFoundException;
 import net.project.certificate.mapper.CertificateMapper;
 import net.project.certificate.repository.CertificateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -42,21 +45,22 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public List<CertificateDto> getAllCertificates(String search, String sortBy) {
+    public Page<CertificateDto> getAllCertificates(String search, String sortBy, int page, int pageSize) {
         Sort sort = Sort.by(Sort.Direction.ASC, sortBy != null ? sortBy : "startDate");
+        Pageable pageable = PageRequest.of(page, pageSize, sort);
 
-        List<Certificate> certificates;
+        Page<Certificate> certificates;
 
         if (search != null && !search.isEmpty()) {
-            certificates = certificateRepository.findByCertificationNameContainingIgnoreCase(search, sort);
+            certificates = certificateRepository.findByCertificationNameContainingIgnoreCase(search, pageable);
         } else {
-            certificates = certificateRepository.findAll(sort);
+            certificates = certificateRepository.findAll(pageable);
         }
 
-        return certificates.stream()
-                .map(certificateMapper::toCertificateDto)
-                .collect(Collectors.toList());
+        return certificates.map(certificateMapper::toCertificateDto);
     }
+
+
 
     @Override
     public CertificateDto updateCertificate(Long certificateId,CertificateDto updateCertificate) {
