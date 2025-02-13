@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,6 +42,10 @@ public class DocumentServiceImpl implements DocumentService {
                 .orElseThrow(()-> new CertificateNotFoundException("Certificate not found with id: " + certificateId));
         String fileName = file.getOriginalFilename();
         String filePath = UPLOAD_DIR + fileName;
+        File directory = new File(UPLOAD_DIR);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
 
         try {
             Files.copy(file.getInputStream(), Path.of(filePath), StandardCopyOption.REPLACE_EXISTING);

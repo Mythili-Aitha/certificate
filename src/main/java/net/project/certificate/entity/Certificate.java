@@ -40,7 +40,7 @@ public class Certificate {
     private String status="ACTIVE";
     @Column(name = "file_path")
     private String filePath;
-    @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL, orphanRemoval = false, fetch = FetchType.LAZY)
     private List<Document> documents;
     @Transient
     private Long remainingDays;

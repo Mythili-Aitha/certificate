@@ -14,14 +14,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
-
 @Service
 
 public class CertificateServiceImpl implements CertificateService {
 
     private final CertificateRepository certificateRepository;
     private final CertificateMapper certificateMapper;
+
 
     @Autowired
     public CertificateServiceImpl(CertificateRepository certificateRepository, CertificateMapper certificateMapper) {
@@ -66,6 +65,9 @@ public class CertificateServiceImpl implements CertificateService {
     public CertificateDto updateCertificate(Long certificateId,CertificateDto updateCertificate) {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateNotFoundException("Certificate is not found with that id:" + certificateId));
+//        System.out.println("Updating Certificate ID: " + certificateId);
+//        System.out.println("Received Data: " + updateCertificate);
+
         certificate.setCertificationName(updateCertificate.getCertificationName());
         certificate.setIssuedBy(updateCertificate.getIssuedBy());
         certificate.setLicenseNumber(updateCertificate.getLicenseNumber());
@@ -74,14 +76,17 @@ public class CertificateServiceImpl implements CertificateService {
         certificate.setEndDate(updateCertificate.getEndDate());
         certificate.setStatus(updateCertificate.getStatus());
         certificate.setRemainingDays(Math.max(java.time.temporal.ChronoUnit.DAYS.between(java.time.LocalDate.now(), certificate.getEndDate()),0));
-        if(updateCertificate.getDocuments() != null && !updateCertificate.getDocuments().isEmpty()) {
+        if(updateCertificate.getDocuments() != null) {
+//            System.out.println("Updating Documents" + updateCertificate.getDocuments());
             List<Document> updatedDocuments = updateCertificate.getDocuments()
                     .stream()
-                    .map(dto -> certificateMapper.toDocumentEntity(dto, certificate)) // ✅ Convert DTOs to Entity
-                    .collect(Collectors.toList());
-            certificate.setDocuments(updatedDocuments);
+                    .map(dto -> certificateMapper.toDocumentEntity(dto, certificate))
+                    .toList();
+            certificate.getDocuments().clear();
+            certificate.getDocuments().addAll(updatedDocuments);
         }
-        return certificateMapper.toCertificateDto(certificateRepository.save(certificate));
+        Certificate savedCertificate = certificateRepository.save(certificate);
+        return certificateMapper.toCertificateDto(savedCertificate);
     }
 
     @Override
