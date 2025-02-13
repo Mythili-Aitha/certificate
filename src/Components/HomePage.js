@@ -11,6 +11,8 @@ import SendIcon from '@mui/icons-material/Send';
 
 const REST_API_BASE_URL = "http://localhost:8080/api";
 
+const options = ['Name', 'startDate']
+
 export default function HomePage() {
 
   const navigate = useNavigate()
@@ -78,12 +80,13 @@ export default function HomePage() {
       <Button size="small" variant="contained" color="primary" fullWidth onClick={() =>  navigate("/addcertificate")}>Add Certifcate</Button>
       </Box>
       </Card>
-      <Card sx={{ marginTop: 2 ,gap:1}}>
+      {/* <Card sx={{ marginTop: 2 ,gap:1}}> */}
       <Grid container spacing={2} sx={{ marginTop: 2 }}>
       {certificates.length > 0 ? (
   certificates.map((certificate) => (
     <Grid item xs={12} sm={6} md={4} lg={2.4} key={certificate.id}>
-      <Card sx={{ padding: 2, textAlign: "center" }}>
+      <Card sx={{ padding: 2, textAlign: "center"}} >
+      {/* , backgroundImage:`url('/images/backgroundimg.png')`, backgroundSize:"cover", backgroundPosition:"center", height:250 */}
       <h3 className='heading'>{certificate.certificationName}</h3>
       <p><strong>Issued By:</strong> {certificate.issuedBy}</p>
       <p><strong>Start Date:</strong> {certificate.startDate}</p>
@@ -92,7 +95,7 @@ export default function HomePage() {
         <Button size="small" variant="outlined" startIcon={<DeleteIcon />} onClick={() => handleDelete(certificate.id)} >Delete</Button>
         <Modal open={open} onClose={() => setOpen(false)} aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description">
-            <Box sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',width: 400,bgcolor: 'background.paper',boxShadow: 24,p: 4}}>
+            <Box sx={{position: 'absolute',top: '50%',left: '50%',transform: 'translate(-50%, -50%)',width: 400,bgcolor: "whitesmoke",boxShadow: 24,p: 4}}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Are you sure you want to Delete ?
           </Typography>
@@ -107,7 +110,7 @@ export default function HomePage() {
       </Grid>
       <Pagination count={totalPages} page={page + 1} onChange={handlePageChange} color="primary" sx={{ display: "flex", justifyContent: "center", marginTop: 2 }} />
     
-      </Card> 
+      {/* </Card>  */}
     </>
   )
 }
