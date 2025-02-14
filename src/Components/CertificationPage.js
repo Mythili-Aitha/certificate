@@ -1,4 +1,4 @@
-import { Button, Card, styled, TextField } from '@mui/material'
+import { Button, Card, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Box from '@mui/material/Box';
@@ -40,8 +40,10 @@ export default function CertificationPage() {
           }
       };
       const handleFileChange = (e) => {
+        console.log("Files selected:", e.target.files);
+        //console.log("Files selected:", [ ...e.target.files]);
         if (e.target.files.length > 0) {
-            setSelectedFiles([...e.target.files]);
+            setSelectedFiles([...selectedFiles,...e.target.files]);
         }
     };
 
@@ -62,11 +64,11 @@ export default function CertificationPage() {
                 console.log("Uploading files:", selectedFiles);
                 const formData = new FormData();
                 selectedFiles.forEach(file => {
-                    formData.append("files", file);
+                    formData.append("files", file); 
                 });
 
-                await axios.post(`${REST_API_BASE_URL}/upload/${savedCertificate.id}`, formData, {
-                    headers: { "Content-Type": "multipart/form-data" }
+                await axios.post(`${REST_API_BASE_URL}/documents/upload/${savedCertificate.id}`, formData, {
+                    headers: { "Accept": "application/json" }
                 });
                 console.log("File upload successful");
             }
@@ -76,7 +78,7 @@ export default function CertificationPage() {
         }
     };
 
-      const VisuallyHiddenInput=styled('input')({ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: 0})
+    //   const VisuallyHiddenInput=styled('input')({ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: 0})
     
   return (
     <>
@@ -85,15 +87,35 @@ export default function CertificationPage() {
     <Box sx={{display:"flex", flexDirection:"column", gap:1, alignItems:"flex-start"}}>
           <TextField id="certificationName" variant="outlined" value={certification.certificationName} label="Certification Name" onChange={handleChange} />
           <TextField id="issuedBy" variant="outlined" value={certification.issuedBy} label="Issued By" onChange={handleChange} />
-          <TextField id="licenseNumber" variant="outlined" value={certification.liscenceNumber} label="License Number" onChange={handleChange} />
+          <TextField id="licenseNumber" variant="outlined" value={certification.licenseNumber} label="License Number" onChange={handleChange} />
           <TextField id="url" variant="outlined" value={certification.url} label="URL" onChange={handleChange} />
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker value={certification.startDate ? dayjs(certification.startDate) : null} label="Start Date" onChange={(newValue) => handleChange(dayjs(newValue).format("YYYY-MM-DD"), "startDate")} />
             <DatePicker value={certification.endDate ? dayjs(certification.endDate) : null} label="End Date" onChange={(newValue) => handleChange(dayjs(newValue).format("YYYY-MM-DD"), "endDate")} />
           </LocalizationProvider>
-          <Button variant="outlined" startIcon={<CloudUploadIcon />}>File Upload
-          <VisuallyHiddenInput type="file" onChange={handleFileChange} multiple /></Button>
+          <Button variant="outlined" startIcon={<CloudUploadIcon />} onClick={() => document.getElementById('fileUpload').click()}>
+            File Upload</Button>
+            <input type="file"  id="fileUpload" onChange={handleFileChange} multiple accept="image/*, application/pdf" style={{ display: 'none' }}  />
+            {selectedFiles.length > 0 && (
+    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, marginTop: 2 }}>
+        {selectedFiles.map((file, index) => {
+            const fileURL = URL.createObjectURL(file); 
+
+            return (
+                <Card key={index} sx={{ padding: 1, maxWidth: 150, textAlign: "center" }}>
+                    {file.type.startsWith("image/") ? (
+                        <img src={fileURL} alt={file.name} style={{ width: "100%", height: "auto", borderRadius: "5px" }} />
+                    ) : file.type === "application/pdf" ? (
+                        <iframe src={fileURL} title={file.name} width="100%" height="150px" />
+                    ) : (
+                        <p>{file.name}</p>
+                    )}
+                </Card>
+            );
+        })}
+    </Box>
+    )}
         </Box>
 
         <Box sx={{ display: "flex", gap: 1, position: "fixed", bottom: 10, flexDirection: "row", left: "70%" }}>
