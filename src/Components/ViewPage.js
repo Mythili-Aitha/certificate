@@ -35,6 +35,25 @@ export default function ViewPage() {
     <p><strong>Start Date:</strong> {certificate.startDate} - <strong>End Date:</strong> {certificate.endDate}</p>
     <p><strong>Remaining Days for Expiration:</strong> {certificate.remainingDays}</p>
     <p><strong>Number of Documents:</strong> {certificate.documents ? certificate.documents.length : 0}</p>
+    {certificate.documents && certificate.documents.length > 0 && (
+    <>
+    <p><strong>Documents:</strong></p>
+    {certificate.documents.map((doc, index) => (
+      <div key={index}>
+        <p>{doc.fileName}</p>
+        {doc.fileName.match(/\.(jpeg|jpg|png|gif)$/) ? (
+          <img src={`${REST_API_BASE_URL}/documents/uploads/${doc.fileName}`} 
+               alt="Document" 
+               style={{ width: "200px", height: "auto" }} />
+        ) : (
+          <a href={`${REST_API_BASE_URL}/documents/uploads/${doc.fileName}`} 
+             target="_blank" 
+             rel="noopener noreferrer">Download File</a>
+        )}
+      </div>
+    ))}
+  </>
+)}
   </div>
   ) : <p>Loading certificate details...</p>}
     </Card>

@@ -1,6 +1,6 @@
-import { Card, TextField, InputAdornment, Button, Typography, Modal, Pagination, Grid } from '@mui/material'
+import { Card, TextField, InputAdornment, Button, Typography, Modal, Pagination, Grid, ButtonGroup,  MenuItem, Menu } from '@mui/material'
 import Box from '@mui/material/Box';
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios';
 import SearchIcon from "@mui/icons-material/Search";
 import SwapVertIcon from '@mui/icons-material/SwapVert';
@@ -11,7 +11,7 @@ import SendIcon from '@mui/icons-material/Send';
 
 const REST_API_BASE_URL = "http://localhost:8080/api";
 
-const options = ['Name', 'startDate']
+const options = ['certificationName', 'startDate']
 
 export default function HomePage() {
 
@@ -19,11 +19,13 @@ export default function HomePage() {
   const [certificates, setCertificates] = useState([]);
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOption, setSortOption] = useState("startDate");
+  const [sortOption, setSortOption] = useState("");
   const [deleteId, setDeleteId] = useState(null);
   const [open, setOpen] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  const pageSize = 10;
+  const anchorRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  
 
   useEffect(() => {
     axios.get(`${REST_API_BASE_URL}/certificates`, { params: { search: searchTerm, sortBy: sortOption, page:page, pageSize: 10 } })
@@ -37,9 +39,11 @@ export default function HomePage() {
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
-  const handleSort = () => {
-    setSortOption(prev => prev === "startDate" ? "certificationName" : "startDate");
+  const handleSortChange = (event, index) => {
+    setSortOption(options[index]);  
+    setMenuOpen(false);  
   };
+  const handleToggle = () =>{setMenuOpen((prev) => !prev)}
   const handlePageChange = (event, value) => setPage(value - 1);
   // Delete certificate
   const handleDelete = (id) => {
@@ -72,11 +76,18 @@ export default function HomePage() {
                     </InputAdornment>
                   ),
                 }}/>
-      <Button size="small" variant="text" onClick={handleSort} sx={{maxHeight:40, maxWidth:60}}>
-        <SwapVertIcon /> Sort by {sortOption === "startDate" ? "Name" : "Start Date"}
+      <ButtonGroup variant="text" size="small" ref={anchorRef}>
+      <Button size="small" variant="text" onClick={handleToggle} sx={{maxHeight:40, maxWidth:60}}>
+        <SwapVertIcon /> Sort by 
       <ArrowDropDownIcon />
       </Button>
-
+      </ButtonGroup>
+      <Menu anchorEl={anchorRef.current} open={menuOpen} onClose={() => setMenuOpen(false)}>
+            {options.map((option, index) => (
+              <MenuItem key={option} selected={option === sortOption} onClick={(e) => handleSortChange(e, index)}>
+                {option === "startDate" ? "Start Date" : "Name"} </MenuItem>
+            ))}
+          </Menu>
       <Button size="small" variant="contained" color="primary" fullWidth onClick={() =>  navigate("/addcertificate")}>Add Certifcate</Button>
       </Box>
       </Card>

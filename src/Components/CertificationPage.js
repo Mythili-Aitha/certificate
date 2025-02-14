@@ -1,4 +1,4 @@
-import { Button, Card, styled, TextField } from '@mui/material'
+import { Button, Card, TextField } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
 import Box from '@mui/material/Box';
@@ -41,8 +41,9 @@ export default function CertificationPage() {
       };
       const handleFileChange = (e) => {
         console.log("Files selected:", e.target.files);
+        //console.log("Files selected:", [ ...e.target.files]);
         if (e.target.files.length > 0) {
-            setSelectedFiles([...e.target.files]);
+            setSelectedFiles([...selectedFiles,...e.target.files]);
         }
     };
 
