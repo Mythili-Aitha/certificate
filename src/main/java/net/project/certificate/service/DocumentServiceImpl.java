@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,6 +73,13 @@ public class DocumentServiceImpl implements DocumentService {
         return documents.stream()
                 .map(certificateMapper::toDocumentDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Document findByFileName(String fileName) {
+        System.out.println("Document deleted successfully."+fileName);
+        Optional<Document> document = documentRepository.findByFileName(fileName);
+        return document.orElse(null);
     }
 
     @Override

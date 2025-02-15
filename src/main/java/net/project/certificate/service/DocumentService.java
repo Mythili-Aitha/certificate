@@ -11,6 +11,9 @@ public interface DocumentService {
 
     List<DocumentDto> getDocumentByCertificateId(Long certificateId);
 
+    Document findByFileName(String fileName);
+
     void deleteDocumentById(Long id);
+
 
 }

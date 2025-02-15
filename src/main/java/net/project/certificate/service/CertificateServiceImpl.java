@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 @Service
 
@@ -40,6 +41,7 @@ public class CertificateServiceImpl implements CertificateService {
     public CertificateDto getCertificate(Long certificateId) {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateNotFoundException("Certificate is not found with that id:" + certificateId));
+        certificate.getDocuments().size();
         return certificateMapper.toCertificateDto(certificate);
     }
 
@@ -65,8 +67,10 @@ public class CertificateServiceImpl implements CertificateService {
     public CertificateDto updateCertificate(Long certificateId,CertificateDto updateCertificate) {
         Certificate certificate = certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new CertificateNotFoundException("Certificate is not found with that id:" + certificateId));
-//        System.out.println("Updating Certificate ID: " + certificateId);
-//        System.out.println("Received Data: " + updateCertificate);
+        System.out.println("Updating Certificate ID: " + certificateId);
+        System.out.println("Received Data: " + updateCertificate.getDocuments());
+        System.out.println("Status: " + updateCertificate.getStatus());
+        System.out.println("File Path: " + updateCertificate.getFilePaths());
 
         certificate.setCertificationName(updateCertificate.getCertificationName());
         certificate.setIssuedBy(updateCertificate.getIssuedBy());
@@ -74,14 +78,21 @@ public class CertificateServiceImpl implements CertificateService {
         certificate.setUrl(updateCertificate.getUrl());
         certificate.setStartDate(updateCertificate.getStartDate());
         certificate.setEndDate(updateCertificate.getEndDate());
-        certificate.setStatus(updateCertificate.getStatus());
-        certificate.setRemainingDays(Math.max(java.time.temporal.ChronoUnit.DAYS.between(java.time.LocalDate.now(), certificate.getEndDate()),0));
-        if(updateCertificate.getDocuments() != null) {
+        certificate.setStatus(updateCertificate.getStatus() != null ? updateCertificate.getStatus() : "ACTIVE");
+        if (certificate.getEndDate() != null) {
+            certificate.setRemainingDays(Math.max(java.time.temporal.ChronoUnit.DAYS.between(
+                    java.time.LocalDate.now(), certificate.getEndDate()), 0));
+        } else {
+            certificate.setRemainingDays(0L);
+        }        if(updateCertificate.getDocuments() != null) {
 //            System.out.println("Updating Documents" + updateCertificate.getDocuments());
             List<Document> updatedDocuments = updateCertificate.getDocuments()
                     .stream()
                     .map(dto -> certificateMapper.toDocumentEntity(dto, certificate))
                     .toList();
+            if (certificate.getDocuments() == null) {
+                certificate.setDocuments(new ArrayList<>());
+            }
             certificate.getDocuments().clear();
             certificate.getDocuments().addAll(updatedDocuments);
         }

@@ -9,6 +9,7 @@ import lombok.Setter;
 import net.project.certificate.entity.Document;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -36,12 +37,12 @@ public class Certificate {
     private LocalDate startDate;
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
-    @Column(name = "status", columnDefinition = "VARCHAR(20) DEFAULT 'ACTIVE'")
+    @Column(name = "status", columnDefinition = "VARCHAR(20) DEFAULT 'ACTIVE'", nullable = true)
     private String status="ACTIVE";
     @Column(name = "file_path")
     private String filePath;
-    @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL, orphanRemoval = false, fetch = FetchType.LAZY)
-    private List<Document> documents;
+    @OneToMany(mappedBy = "certificate", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Document> documents = new ArrayList<>();
     @Transient
     private Long remainingDays;
 
