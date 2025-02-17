@@ -28,6 +28,9 @@ export default function CertificationPage() {
       useEffect(() => {
         if (existingCertificate) {
           setCertification(existingCertificate);
+          if (existingCertificate.filePaths) {
+            setSelectedFiles(existingCertificate.filePaths); 
+        }
         }
       }, [existingCertificate]);
     
@@ -51,8 +54,12 @@ export default function CertificationPage() {
         console.log("Submitting certificate:", certification);
         try {
             let savedCertificate;
-
             if (isEditing) {
+                if (!existingCertificate || !existingCertificate.id) {
+                    console.error("Error: existingCertificate is null or missing id.");
+                    return;
+                }
+                console.log("Certificate ID before sending request:", existingCertificate.id);    
                 const response = await axios.put(`${REST_API_BASE_URL}/certificates/${existingCertificate.id}`, certification);
                 savedCertificate = response.data;
             } else {
@@ -68,18 +75,28 @@ export default function CertificationPage() {
                 });
 
                 await axios.post(`${REST_API_BASE_URL}/documents/upload/${savedCertificate.id}`, formData, {
-                    headers: { "Accept": "application/json" }
+                    headers: { "Content-Type": "multipart/form-data" }
                 });
                 console.log("File upload successful");
             }
             navigate("/");
         } catch (error) {
-            console.error("Error saving certificate:", error);
+            // console.error("Error saving certificate:", error);
         }
     };
-
-    //   const VisuallyHiddenInput=styled('input')({ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0, 0, 0, 0)', whiteSpace: 'nowrap', border: 0})
-    
+    const handleDeleteFile = async (file) => {
+        const filePath = file.isUploaded ? file.name : file;
+        try {
+            await axios.delete(`${REST_API_BASE_URL}/documents/delete`, {
+                headers: { "Content-Type": "application/json" },
+            data: JSON.stringify({ filePath: filePath.trim() }),
+            });
+            console.log("Deleted file from DB and storage:", filePath);
+            setSelectedFiles(prev => prev.filter(f => f.name !== filePath));
+            } catch (error) {
+            console.error("Error deleting file:", error);
+            }
+        };    
   return (
     <>
     <Card sx={{display:"flex" , justifyContent:"space-between", gap:1, padding:2, flexDirection:"column"}}> 
@@ -98,26 +115,28 @@ export default function CertificationPage() {
             File Upload</Button>
             <input type="file"  id="fileUpload" onChange={handleFileChange} multiple accept="image/*, application/pdf" style={{ display: 'none' }}  />
             {selectedFiles.length > 0 && (
-    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, marginTop: 2 }}>
-        {selectedFiles.map((file, index) => {
-            const fileURL = URL.createObjectURL(file); 
-
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, marginTop: 2 }}>
+            {selectedFiles.map((file, index) => {
+            const isUploadedFile = typeof file === "string"; // Check if it's an uploaded file path or newly selected file
+            const fileURL = isUploadedFile ? `http://localhost:8080/${file}` : URL.createObjectURL(file);
             return (
                 <Card key={index} sx={{ padding: 1, maxWidth: 150, textAlign: "center" }}>
-                    {file.type.startsWith("image/") ? (
-                        <img src={fileURL} alt={file.name} style={{ width: "100%", height: "auto", borderRadius: "5px" }} />
-                    ) : file.type === "application/pdf" ? (
-                        <iframe src={fileURL} title={file.name} width="100%" height="150px" />
+                    {file.type?.startsWith("image/") || file.endsWith(".png") || file.endsWith(".jpg") ? (
+                        <img src={fileURL} alt={file.name || file} style={{ width: "100%", height: "auto", borderRadius: "5px" }} />
+                    ) : file.type === "application/pdf" || file.endsWith(".pdf") ? (
+                        <a href={fileURL} target="_blank" rel="noopener noreferrer">
+                            <Button variant="outlined">View PDF</Button></a>
                     ) : (
-                        <p>{file.name}</p>
+                        <a href={fileURL} target="_blank" rel="noopener noreferrer">
+                            <p>{file.name || file}</p></a>
                     )}
+                    <Button variant="outlined" color="error" onClick={() => handleDeleteFile(file)}>Delete</Button>
                 </Card>
-            );
-        })}
-    </Box>
-    )}
+                );
+            })}
         </Box>
-
+        )}
+        </Box>
         <Box sx={{ display: "flex", gap: 1, position: "fixed", bottom: 10, flexDirection: "row", left: "70%" }}>
           <Button variant="outlined" onClick={() => navigate("/")}>Cancel</Button>
           <Button variant="contained" onClick={handleSubmit}>
