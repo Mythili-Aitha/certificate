@@ -14,12 +14,13 @@ Installation & SetUP:
    cd certification-frontend
 
 2. Install the required dependencies
-   -- npm install @mui/material @emotion/react @emotion/styled
-   -- npm install @mui/material @mui/styled-engine-sc styled-components
-   -- npm install @fontsource/roboto
-   -- npm install @mui/icons-material
-   -- npm install axios --save
-   -- npm install react-router-dom
+
+   - npm install @mui/material @emotion/react @emotion/styled
+   - npm install @mui/material @mui/styled-engine-sc styled-components
+   - npm install @fontsource/roboto
+   - npm install @mui/icons-material
+   - npm install axios --save
+   - npm install react-router-dom
 
 3. Start the Development Server
    npm start - Always check the package.json file for the respected dependencies.
