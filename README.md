@@ -1,33 +1,68 @@
-Certification Management System - Frontend
-This is the frontend of the Certification Management System, built using React.js with Material UI.
-Features:
+# Certification Management System - Frontend
 
-1. View, Add, Edit, and Delete certifications.
-2. Upload and manage associated documents.
-3. Sort and search certifications by name.
-4. Track remaining days until certificate expiration.
+This is the frontend of the **Certification Management System**, built using **React.js** with **Material UI**.
 
-Installation & SetUP:
+## Features
 
-1. Clone the Repository
-   git clone https://github.com/username/certification-frontend.git
-   cd certification-frontend
+- View, Add, Edit, and Delete certifications.
+- Upload and manage associated documents.
+- Sort and search certifications by name.
+- Track remaining days until certificate expiration.
 
-2. Install the required dependencies
+## Installation & Setup
 
-   - npm install @mui/material @emotion/react @emotion/styled
-   - npm install @mui/material @mui/styled-engine-sc styled-components
-   - npm install @fontsource/roboto
-   - npm install @mui/icons-material
-   - npm install axios --save
-   - npm install react-router-dom
+### 1. Clone the Repository
+```sh
+git clone https://github.com/username/certification-frontend.git
+cd certification-frontend
+```
 
-3. Start the Development Server
-   npm start - Always check the package.json file for the respected dependencies.
+### 2. Install Dependencies
+```sh
+npm install @mui/material @emotion/react @emotion/styled
+npm install @mui/material @mui/styled-engine-sc styled-components
+npm install @fontsource/roboto
+npm install @mui/icons-material
+npm install axios --save
+npm install react-router-dom
+```
 
-Built With:
+### 3. Start the Development Server
+```sh
+npm start
+```
+> **Note:** Always check the `package.json` file for the required dependencies.
 
-- React.js- Frontend Library
-- Material UI- UI Components
-- React Router - Client-side Routing
-- Axios - API Requests
+## Built With
+
+- **React.js** - Frontend Library
+- **Material UI** - UI Components
+- **React Router** - Client-side Routing
+- **Axios** - API Requests
+
+## Project Structure
+```
+certification-frontend/
+│── src/
+│   ├── components/   # Reusable UI Components
+│   ├── pages/        # Application Pages
+│   ├── services/     # API Calls and Services
+│   ├── utils/        # Helper Functions
+│   ├── App.js        # Main App Component
+│   ├── index.js      # Entry Point
+│
+│── public/           # Static Assets
+│── package.json      # Dependencies and Scripts
+│── README.md         # Documentation
+```
+
+## Contributing
+If you would like to contribute, please follow these steps:
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Commit your changes (`git commit -m 'Add new feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Open a Pull Request.
+
+
+Happy Coding! 🚀
