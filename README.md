@@ -13,7 +13,7 @@ This is the frontend of the **Certification Management System**, built using **R
 
 ### 1. Clone the Repository
 ```sh
-git clone https://github.com/username/certification-frontend.git
+git clone https://github.com/Mythili-Aitha/certificate-management.git
 cd certification-frontend
 ```
 
